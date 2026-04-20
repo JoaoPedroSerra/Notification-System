@@ -1,33 +1,33 @@
 # Notification System
 
-API REST para envio assincrono de emails transacionais. O sistema persiste cada notificacao no banco, despacha o envio em background sem bloquear a resposta HTTP e reprocessa automaticamente falhas via scheduler. Desenvolvido como demonstracao de boas praticas em Python/FastAPI para cenarios reais de fintech, e-commerce e SaaS.
+API REST para envio assíncrono de emails transacionais. O sistema persiste cada notificação no banco, despacha o envio em background sem bloquear a resposta HTTP e reprocessa automaticamente falhas via scheduler. Desenvolvido como demonstração de boas práticas em Python/FastAPI para cenários reais de fintech, e-commerce e SaaS.
 
 ## Stack
 
-- **FastAPI** com BackgroundTasks para processamento nao-bloqueante
+- **FastAPI** com BackgroundTasks para processamento não-bloqueante
 - **SQLAlchemy 2 + PostgreSQL** com Alembic para migrations versionadas
-- **smtplib + email.mime** (biblioteca padrao) para envio via SMTP/STARTTLS
+- **smtplib + email.mime** (biblioteca padrão) para envio via SMTP/STARTTLS
 - **Jinja2** para templates HTML de email
-- **APScheduler** para retry automatico sem dependencia de Celery/Redis
+- **APScheduler** para retry automático sem dependência de Celery/Redis
 - **slowapi** para rate limiting por IP
-- **Pydantic v2** para validacao de entrada e configuracao
+- **Pydantic v2** para validação de entrada e configuração
 
 ## Estrutura
 
 ```
 app/
   api/            rotas e schemas Pydantic
-  core/           configuracao, autenticacao, rate limiting, banco e logging
+  core/           configuração, autenticação, rate limiting, banco e logging
   models/         ORM: Recipient e Notification
   services/       email_sender, notification_service, scheduler
   templates/email templates HTML (base + 5 tipos)
 alembic/          migrations versionadas
-tests/            testes unitarios, de integracao e de seguranca (SQLite em memoria)
+tests/            testes unitários, de integração e de segurança (SQLite em memória)
 ```
 
 ## Como rodar
 
-### Pre-requisitos
+### Pré-requisitos
 
 - Python 3.11+ e PostgreSQL local, ou Docker e Docker Compose
 
@@ -39,14 +39,14 @@ python -m venv .venv
 source .venv/bin/activate       # Linux/macOS
 # .venv\Scripts\activate        # Windows
 
-# 2. Instale as dependencias
+# 2. Instale as dependências
 pip install -r requirements.txt
 
 # 3. Configure o ambiente
 cp .env.example .env
 ```
 
-Edite o `.env` gerado. Para rodar localmente, o `DATABASE_URL` deve apontar para `localhost`, nao para `db`:
+Edite o `.env` gerado. Para rodar localmente, o `DATABASE_URL` deve apontar para `localhost`, não para `db`:
 
 ```env
 DATABASE_URL=postgresql://notifications_user:sua_senha@localhost:5432/notifications_db
@@ -68,8 +68,8 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-A API estara disponivel em `http://localhost:8000`.
-Documentacao interativa (apenas em desenvolvimento): `http://localhost:8000/docs`
+A API estará disponível em `http://localhost:8000`.
+Documentação interativa (apenas em desenvolvimento): `http://localhost:8000/docs`
 
 ### Com Docker Compose
 
@@ -85,15 +85,15 @@ docker compose up --build
 pytest tests/ -v
 ```
 
-Os testes usam SQLite em memoria com `StaticPool` (todas as conexoes compartilham o mesmo banco em memoria) e nunca fazem chamadas SMTP ou PostgreSQL reais.
+Os testes usam SQLite em memória com `StaticPool` (todas as conexões compartilham o mesmo banco em memória) e nunca fazem chamadas SMTP ou PostgreSQL reais.
 
 ### Configurar Gmail SMTP
 
-Acesse: Conta Google > Seguranca > Verificacao em 2 etapas > Senhas de app
+Acesse: Conta Google > Segurança > Verificação em 2 etapas > Senhas de app
 
 Gere uma senha de 16 caracteres e use como `SMTP_PASSWORD` no `.env`.
 
-## Autenticacao
+## Autenticação
 
 Todos os endpoints (exceto `/health`) exigem o header `X-API-Key`.
 
@@ -112,40 +112,40 @@ Use em cada request:
 curl -H "X-API-Key: <sua-chave>" http://localhost:8000/api/v1/notifications/
 ```
 
-Em desenvolvimento, se `API_KEY` estiver vazia no `.env`, a autenticacao e desabilitada com um aviso de log.
+Em desenvolvimento, se `API_KEY` estiver vazia no `.env`, a autenticação é desabilitada com um aviso de log.
 
-## Configurar producao
+## Configurar produção
 
 ```bash
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Variaveis obrigatorias com `APP_ENV=production`:
+Variáveis obrigatórias com `APP_ENV=production`:
 
-| Variavel | Requisito |
+| Variável | Requisito |
 |----------|-----------|
-| `SECRET_KEY` | Minimo 32 chars, nao pode ser o valor padrao |
-| `API_KEY` | Minimo 32 chars |
-| `SMTP_USER` | Obrigatorio |
-| `SMTP_PASSWORD` | Obrigatorio |
-| `EMAIL_FROM` | Obrigatorio |
-| `ALLOWED_ORIGINS` | Nao pode ser `*` |
+| `SECRET_KEY` | Mínimo 32 chars, não pode ser o valor padrão |
+| `API_KEY` | Mínimo 32 chars |
+| `SMTP_USER` | Obrigatório |
+| `SMTP_PASSWORD` | Obrigatório |
+| `EMAIL_FROM` | Obrigatório |
+| `ALLOWED_ORIGINS` | Não pode ser `*` |
 
-O sistema recusa iniciar se qualquer um desses requisitos nao for atendido.
+O sistema recusa iniciar se qualquer um desses requisitos não for atendido.
 
 ## Endpoints
 
-| Metodo | Rota | Descricao |
+| Método | Rota | Descrição |
 |--------|------|-----------|
-| GET | `/health` | Health check (publico) |
-| POST | `/api/v1/notifications/` | Notificacao generica |
+| GET | `/health` | Health check (público) |
+| POST | `/api/v1/notifications/` | Notificação genérica |
 | POST | `/api/v1/notifications/welcome` | Boas-vindas |
-| POST | `/api/v1/notifications/password-reset` | Redefinicao de senha |
-| POST | `/api/v1/notifications/payment-confirmation` | Confirmacao de pagamento |
+| POST | `/api/v1/notifications/password-reset` | Redefinição de senha |
+| POST | `/api/v1/notifications/payment-confirmation` | Confirmação de pagamento |
 | POST | `/api/v1/notifications/alert` | Alerta (info / warning / critical) |
-| GET | `/api/v1/notifications/` | Listar com filtro por status e paginacao |
+| GET | `/api/v1/notifications/` | Listar com filtro por status e paginação |
 | GET | `/api/v1/notifications/{id}` | Detalhe completo (inclui last_error) |
-| POST | `/api/v1/notifications/{id}/retry` | Reenviar notificacao com status FAILED |
+| POST | `/api/v1/notifications/{id}/retry` | Reenviar notificação com status FAILED |
 
 ## Exemplos
 
@@ -162,7 +162,7 @@ curl -X POST http://localhost:8000/api/v1/notifications/welcome \
   }'
 ```
 
-**Alerta critico**
+**Alerta crítico**
 ```bash
 curl -X POST http://localhost:8000/api/v1/notifications/alert \
   -H "Content-Type: application/json" \
@@ -171,14 +171,14 @@ curl -X POST http://localhost:8000/api/v1/notifications/alert \
     "recipient_email": "ops@empresa.com",
     "recipient_name": "Time de Ops",
     "alert_title": "CPU acima de 90%",
-    "alert_message": "Servidor web-01 com CPU em 95% ha 10 minutos.",
+    "alert_message": "Servidor web-01 com CPU em 95% há 10 minutos.",
     "severity": "critical",
     "action_url": "https://grafana.empresa.com",
     "action_label": "Abrir Grafana"
   }'
 ```
 
-**Confirmacao de pagamento**
+**Confirmação de pagamento**
 ```bash
 curl -X POST http://localhost:8000/api/v1/notifications/payment-confirmation \
   -H "Content-Type: application/json" \
@@ -202,17 +202,17 @@ curl -X POST http://localhost:8000/api/v1/notifications/ \
     "recipient_email": "usuario@exemplo.com",
     "recipient_name": "Ana",
     "notification_type": "generic",
-    "subject": "Lembrete de renovacao",
+    "subject": "Lembrete de renovação",
     "scheduled_at": "2024-12-31T10:00:00Z"
   }'
 ```
 
-## Ciclo de vida de uma notificacao
+## Ciclo de vida de uma notificação
 
 ```
 PENDING --> SENDING --> SENT
-                    --> RETRYING (tentativas < maximo)
-                              --> FAILED (tentativas = maximo)
+                    --> RETRYING (tentativas < máximo)
+                              --> FAILED (tentativas = máximo)
 ```
 
-O scheduler verifica notificacoes `PENDING` e `RETRYING` a cada `SCHEDULER_RETRY_INTERVAL_SECONDS` segundos. Registros presos em `SENDING` por mais de `SCHEDULER_STALE_SENDING_SECONDS` segundos sao automaticamente promovidos para `RETRYING`. Notificacoes `FAILED` podem ser reenviadas manualmente via `POST /api/v1/notifications/{id}/retry`.
+O scheduler verifica notificações `PENDING` e `RETRYING` a cada `SCHEDULER_RETRY_INTERVAL_SECONDS` segundos. Registros presos em `SENDING` por mais de `SCHEDULER_STALE_SENDING_SECONDS` segundos são automaticamente promovidos para `RETRYING`. Notificações `FAILED` podem ser reenviadas manualmente via `POST /api/v1/notifications/{id}/retry`.
