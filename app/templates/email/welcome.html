@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Bem-vindo ao {{ app_name }}{% endblock %}
+{% block header_bg %}#4f46e5{% endblock %}
+{% block btn_bg %}#4f46e5{% endblock %}
+
+{% block body %}
+<p class="greeting">Ola, {{ recipient_name }}!</p>
+<p>Sua conta foi criada com sucesso. Estamos felizes em ter voce conosco!</p>
+<p>Com a sua conta voce pode:</p>
+<ul style="color:#555; margin: 0 0 16px 20px;">
+  <li>Gerenciar suas notificacoes em tempo real</li>
+  <li>Configurar alertas personalizados</li>
+  <li>Acompanhar o historico de envios</li>
+</ul>
+<div class="btn-wrap">
+  <a href="{{ login_url }}" class="btn">Acessar minha conta</a>
+</div>
+<hr />
+<p style="font-size:13px; color:#999;">
+  Se voce nao criou esta conta, ignore este email.
+  O link acima expira em 24 horas.
+</p>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject }}{% endblock %}
+{% block header_bg %}#4f46e5{% endblock %}
+{% block btn_bg %}#4f46e5{% endblock %}
+
+{% block body %}
+<p class="greeting">{{ subject }}</p>
+<p>Olá, <strong>{{ recipient_name }}</strong>.</p>
+<div style="color:#555; line-height:1.8;">
+  {{ body_text or "Você tem uma nova notificação." }}
+</div>
+<hr />
+<p style="font-size:13px; color:#999;">
+  Este é um email automático. Por favor, não responda diretamente a esta mensagem.
+</p>
+{% endblock %}

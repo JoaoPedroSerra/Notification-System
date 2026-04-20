@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Pagamento Confirmado — Pedido #{{ order_id }}{% endblock %}
+{% block header_bg %}#059669{% endblock %}
+{% block btn_bg %}#059669{% endblock %}
+
+{% block body %}
+<p class="greeting">Pagamento confirmado</p>
+<p>Olá, <strong>{{ recipient_name }}</strong>!</p>
+<p>Seu pagamento foi processado com sucesso. Segue o resumo do seu pedido:</p>
+
+<!-- Order summary box -->
+<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:20px; margin:20px 0;">
+  <table style="width:100%; border-collapse:collapse; font-size:14px;">
+    <tr>
+      <td style="color:#6b7280; padding:4px 0;">Nº do Pedido</td>
+      <td style="text-align:right; font-weight:600; color:#111;">#{{ order_id }}</td>
+    </tr>
+    {% if items %}
+    <tr><td colspan="2"><hr style="margin:10px 0; border:none; border-top:1px solid #e2e8f0;"></td></tr>
+    {% for item in items %}
+    <tr>
+      <td style="color:#374151; padding:3px 0;">{{ item.name }}</td>
+      <td style="text-align:right; color:#374151;">
+        {{ currency }} {{ "%.2f"|format(item.price) }}
+      </td>
+    </tr>
+    {% endfor %}
+    <tr><td colspan="2"><hr style="margin:10px 0; border:none; border-top:1px solid #e2e8f0;"></td></tr>
+    {% endif %}
+    <tr>
+      <td style="font-weight:700; font-size:15px;">Total</td>
+      <td style="text-align:right; font-weight:700; font-size:18px; color:#059669;">
+        {{ currency }} {{ "%.2f"|format(amount) }}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<hr />
+<p style="font-size:13px; color:#999;">
+  Em caso de dúvidas, entre em contato com nosso suporte.
+  Guarde este email como comprovante de pagamento.
+</p>
+{% endblock %}
