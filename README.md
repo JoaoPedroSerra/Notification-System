@@ -1,7 +1,6 @@
 # Notification System
 
-API REST para envio assíncrono de emails transacionais. O sistema persiste cada notificação no banco, despacha o envio em background sem bloquear a resposta HTTP e reprocessa automaticamente falhas via scheduler. Desenvolvido como demonstração de boas práticas em Python/FastAPI para cenários reais de fintech, e-commerce e SaaS.
-
+API REST para envio assíncrono de emails transacionais. O sistema persiste cada notificação no banco, despacha o envio em background sem bloquear a resposta HTTP e reprocessa automaticamente falhas via scheduler.
 ## Stack
 
 - **FastAPI** com BackgroundTasks para processamento não-bloqueante
